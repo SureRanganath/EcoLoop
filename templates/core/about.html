@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block title %}About{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1 class="fw-bold mb-2"><i class="bi bi-info-circle me-2"></i>About EcoLoop</h1>
+    <p class="opacity-75 mb-0">A Circular Economy Marketplace for Industrial Waste Exchange</p>
+  </div>
+</div>
+<div class="container py-5">
+  <div class="row g-5">
+    <div class="col-lg-8">
+      <h3 class="fw-bold mb-3 section-header">What is EcoLoop?</h3>
+      <p>EcoLoop is a web-based industrial waste exchange marketplace that connects industries producing reusable waste materials with industries that can use those materials as raw inputs. The platform promotes a circular economy by keeping materials in productive use rather than sending them to landfill.</p>
+      <p>For example: a plastic manufacturing company with 500 kg of reusable plastic scraps can list those materials on EcoLoop. A recycling company needing recycled plastic can find that listing, receive an AI-powered recommendation, and submit a purchase request — all within the platform.</p>
+
+      <h3 class="fw-bold mt-5 mb-3 section-header">The Circular Economy</h3>
+      <p>A circular economy is an economic system aimed at eliminating waste and the continual use of resources. It contrasts with the traditional linear economy (make → use → dispose) by keeping products and materials in use for as long as possible.</p>
+      <div class="row g-3 mt-2">
+        <div class="col-md-4">
+          <div class="card text-center p-3 h-100">
+            <i class="bi bi-arrow-repeat fs-2 text-eco-green mb-2"></i>
+            <h6 class="fw-semibold">Reduce</h6>
+            <p class="text-muted small mb-0">Minimise industrial waste generation at the source.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card text-center p-3 h-100">
+            <i class="bi bi-recycle fs-2 text-eco-green mb-2"></i>
+            <h6 class="fw-semibold">Reuse</h6>
+            <p class="text-muted small mb-0">Find new applications for materials before recycling.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card text-center p-3 h-100">
+            <i class="bi bi-gear fs-2 text-eco-green mb-2"></i>
+            <h6 class="fw-semibold">Recycle</h6>
+            <p class="text-muted small mb-0">Process materials into new products when reuse is not possible.</p>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="fw-bold mt-5 mb-3 section-header">AI Recommendation System</h3>
+      <p>EcoLoop uses a content-based recommendation engine built with Python and scikit-learn. The system combines:</p>
+      <ul>
+        <li><strong>TF-IDF text similarity</strong> — matches material descriptions using term frequency–inverse document frequency and cosine similarity.</li>
+        <li><strong>Category compatibility</strong> — prioritises exact category matches.</li>
+        <li><strong>Quantity scoring</strong> — checks whether available quantity meets the buyer's requirement.</li>
+        <li><strong>Price scoring</strong> — evaluates whether the listing price fits the buyer's budget.</li>
+        <li><strong>Location scoring</strong> — gives preference to listings in the buyer's preferred state.</li>
+      </ul>
+      <p class="text-muted small"><em>Note: This is a content-based approach suitable for small datasets. No pretrained model accuracy is claimed. The system explains each recommendation transparently.</em></p>
+
+      <h3 class="fw-bold mt-5 mb-3 section-header">Technology Stack</h3>
+      <div class="row g-3">
+        {% for tech, desc in tech_stack %}
+        <div class="col-md-6">
+          <div class="d-flex gap-2 align-items-start">
+            <i class="bi bi-check-circle-fill text-eco-green mt-1"></i>
+            <div><strong>{{ tech }}</strong><br><small class="text-muted">{{ desc }}</small></div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card p-4 mb-4">
+        <h5 class="fw-bold mb-3"><i class="bi bi-mortarboard me-2 text-eco-green"></i>Project Info</h5>
+        <dl class="row small mb-0">
+          <dt class="col-5">Project</dt><dd class="col-7">EcoLoop</dd>
+          <dt class="col-5">Type</dt><dd class="col-7">Major Project</dd>
+          <dt class="col-5">Domain</dt><dd class="col-7">CSE / Web + AI</dd>
+          <dt class="col-5">Backend</dt><dd class="col-7">Python / Django</dd>
+          <dt class="col-5">Frontend</dt><dd class="col-7">Bootstrap 5</dd>
+          <dt class="col-5">Database</dt><dd class="col-7">SQLite</dd>
+          <dt class="col-5">AI/ML</dt><dd class="col-7">scikit-learn</dd>
+        </dl>
+      </div>
+      <div class="card p-4 bg-eco text-white">
+        <h5 class="fw-bold mb-3"><i class="bi bi-graph-up me-2"></i>Platform Goals</h5>
+        <ul class="list-unstyled small mb-0">
+          <li class="mb-2"><i class="bi bi-arrow-right me-2"></i>Reduce industrial landfill waste</li>
+          <li class="mb-2"><i class="bi bi-arrow-right me-2"></i>Lower raw material costs</li>
+          <li class="mb-2"><i class="bi bi-arrow-right me-2"></i>Connect waste suppliers with buyers</li>
+          <li class="mb-2"><i class="bi bi-arrow-right me-2"></i>Promote circular economy</li>
+          <li class="mb-2"><i class="bi bi-arrow-right me-2"></i>Track environmental impact</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

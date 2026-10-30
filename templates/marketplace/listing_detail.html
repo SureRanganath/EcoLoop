@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% block title %}{{ listing.title }}{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'marketplace' %}" class="text-eco-green">Marketplace</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'marketplace' %}?category={{ listing.category.slug }}" class="text-eco-green">{{ listing.category.name }}</a></li>
+      <li class="breadcrumb-item active">{{ listing.title|truncatechars:30 }}</li>
+    </ol>
+  </nav>
+
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="card p-4">
+        {% if listing.image %}
+        <img src="{{ listing.image.url }}" class="img-fluid rounded mb-4" alt="{{ listing.title }}" style="max-height:350px;object-fit:cover;width:100%">
+        {% else %}
+        <div class="listing-placeholder rounded mb-4" style="height:250px"><i class="bi {{ listing.category.icon }}"></i></div>
+        {% endif %}
+
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+          <div>
+            <span class="badge bg-success-subtle text-success me-2">{{ listing.category.name }}</span>
+            <span class="status-badge badge-{{ listing.status }}">{{ listing.get_status_display }}</span>
+          </div>
+          <div class="d-flex gap-2">
+            {% if user.is_authenticated %}
+            <a href="{% url 'toggle_favourite' listing.pk %}" class="btn btn-outline-danger btn-sm">
+              <i class="bi bi-heart{% if is_favourite %}-fill{% endif %} me-1"></i>
+              {% if is_favourite %}Saved{% else %}Save{% endif %}
+            </a>
+            {% endif %}
+            {% if user.is_authenticated and user == listing.supplier %}
+            <a href="{% url 'edit_listing' listing.pk %}" class="btn btn-outline-primary btn-sm"><i class="bi bi-pencil me-1"></i>Edit</a>
+            <a href="{% url 'delete_listing' listing.pk %}" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash me-1"></i>Delete</a>
+            {% endif %}
+          </div>
+        </div>
+
+        <h2 class="fw-bold mb-3">{{ listing.title }}</h2>
+        <p class="text-muted">{{ listing.description }}</p>
+
+        <div class="row g-3 mt-2">
+          <div class="col-6 col-md-3">
+            <div class="text-muted small">Quantity</div>
+            <div class="fw-bold">{{ listing.quantity }} kg</div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="text-muted small">Price per kg</div>
+            <div class="fw-bold text-eco-green">&#8377;{{ listing.price_per_kg }}</div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="text-muted small">Quality Grade</div>
+            <div class="fw-bold">{{ listing.get_quality_grade_display }}</div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="text-muted small">Total Value</div>
+            <div class="fw-bold">&#8377;{{ listing.total_value }}</div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="text-muted small">Location</div>
+            <div class="fw-bold">{{ listing.city }}, {{ listing.state }}</div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="text-muted small">Listed On</div>
+            <div class="fw-bold">{{ listing.created_at|date:"d M Y" }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card p-4 mb-3">
+        <h6 class="fw-bold mb-3 section-header">Supplier Details</h6>
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <div class="avatar-sm" style="width:48px;height:48px;font-size:1.2rem">
+            {{ listing.supplier.first_name|first|upper }}{{ listing.supplier.last_name|first|upper }}
+          </div>
+          <div>
+            <div class="fw-semibold">{{ listing.supplier.profile.company_name }}</div>
+            <div class="text-muted small">{{ listing.supplier.profile.industry_type }}</div>
+          </div>
+        </div>
+        <div class="small text-muted">
+          <div class="mb-1"><i class="bi bi-geo-alt me-2 text-eco-green"></i>{{ listing.city }}, {{ listing.state }}</div>
+          {% if listing.supplier.profile.is_verified %}
+          <div><i class="bi bi-patch-check me-2 text-success"></i>Verified Supplier</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="card p-4">
+        {% if user.is_authenticated %}
+          {% if user == listing.supplier %}
+          <div class="text-center text-muted py-2">
+            <i class="bi bi-info-circle me-1"></i>This is your listing.
+          </div>
+          {% elif user_request %}
+          <h6 class="fw-bold mb-3">Your Request</h6>
+          <div class="mb-2"><span class="text-muted small">Status:</span> <span class="status-badge badge-{{ user_request.status }} ms-1">{{ user_request.get_status_display }}</span></div>
+          <div class="mb-2"><span class="text-muted small">Quantity:</span> {{ user_request.requested_quantity }} kg</div>
+          {% if user_request.status == 'pending' %}
+          <form method="post" action="{% url 'cancel_request' user_request.pk %}">
+            {% csrf_token %}
+            <button class="btn btn-outline-danger btn-sm w-100 mt-2">Cancel Request</button>
+          </form>
+          {% endif %}
+          {% elif listing.status == 'available' and user.profile.is_buyer %}
+          <h6 class="fw-bold mb-3">Submit Purchase Request</h6>
+          <a href="{% url 'submit_request' listing.pk %}" class="btn btn-eco w-100 fw-semibold">
+            <i class="bi bi-send me-2"></i>Request to Buy
+          </a>
+          {% else %}
+          <div class="text-center text-muted py-2">
+            <span class="status-badge badge-{{ listing.status }}">{{ listing.get_status_display }}</span>
+          </div>
+          {% endif %}
+        {% else %}
+        <div class="text-center">
+          <p class="text-muted small mb-3">Login to submit a purchase request</p>
+          <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-eco w-100">Login to Request</a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  {% if related %}
+  <div class="mt-5">
+    <h4 class="fw-bold mb-4 section-header">Related Listings</h4>
+    <div class="row g-3">
+      {% for r in related %}
+      <div class="col-md-3">
+        <div class="card listing-card h-100">
+          <div class="listing-placeholder" style="height:120px"><i class="bi {{ r.category.icon }}"></i></div>
+          <div class="card-body p-3">
+            <h6 class="fw-semibold small mb-1">{{ r.title|truncatechars:30 }}</h6>
+            <div class="text-eco-green fw-bold small">&#8377;{{ r.price_per_kg }}/kg</div>
+            <div class="text-muted" style="font-size:0.75rem">{{ r.quantity }} kg &bull; {{ r.city }}</div>
+          </div>
+          <div class="card-footer bg-transparent border-0 pt-0 p-3">
+            <a href="{% url 'listing_detail' r.pk %}" class="btn btn-eco btn-sm w-100">View</a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

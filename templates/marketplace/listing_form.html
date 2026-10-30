@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}{{ action }} Listing{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1 class="fw-bold mb-2"><i class="bi bi-{% if action == 'Add' %}plus-circle{% else %}pencil{% endif %} me-2"></i>{{ action }} Waste Listing</h1>
+    <p class="opacity-75 mb-0">{% if action == 'Add' %}Create a new material listing{% else %}Update listing details{% endif %}</p>
+  </div>
+</div>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card p-4">
+        <form method="post" enctype="multipart/form-data" novalidate>
+          {% csrf_token %}
+          <div class="row g-3">
+            <div class="col-12">
+              <h6 class="fw-semibold text-eco-green border-bottom pb-2 mb-1"><i class="bi bi-info-circle me-2"></i>Material Information</h6>
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-semibold">Material Title *</label>
+              {{ form.title }}
+              {% if form.title.errors %}<div class="text-danger small">{{ form.title.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Category *</label>
+              {{ form.category }}
+              {% if form.category.errors %}<div class="text-danger small">{{ form.category.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Quality Grade *</label>
+              {{ form.quality_grade }}
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-semibold">Description *</label>
+              {{ form.description }}
+              <div class="form-text">Describe the material, its source, condition, and any relevant specifications.</div>
+              {% if form.description.errors %}<div class="text-danger small">{{ form.description.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-12">
+              <h6 class="fw-semibold text-eco-green border-bottom pb-2 mb-1 mt-2"><i class="bi bi-currency-rupee me-2"></i>Quantity & Pricing</h6>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Quantity (kg) *</label>
+              {{ form.quantity }}
+              {% if form.quantity.errors %}<div class="text-danger small">{{ form.quantity.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Price per kg (&#8377;) *</label>
+              {{ form.price_per_kg }}
+              {% if form.price_per_kg.errors %}<div class="text-danger small">{{ form.price_per_kg.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-12">
+              <h6 class="fw-semibold text-eco-green border-bottom pb-2 mb-1 mt-2"><i class="bi bi-geo-alt me-2"></i>Location & Status</h6>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">City *</label>
+              {{ form.city }}
+              {% if form.city.errors %}<div class="text-danger small">{{ form.city.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">State *</label>
+              {{ form.state }}
+              {% if form.state.errors %}<div class="text-danger small">{{ form.state.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Status</label>
+              {{ form.status }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Image (optional)</label>
+              {{ form.image }}
+              <div class="form-text">Upload a photo of the material (JPG/PNG, max 5MB).</div>
+            </div>
+            <div class="col-12 mt-3 d-flex gap-2">
+              <button type="submit" class="btn btn-eco px-4 fw-semibold">
+                <i class="bi bi-save me-2"></i>{{ action }} Listing
+              </button>
+              <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

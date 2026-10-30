@@ -1,0 +1,289 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<!-- ── Hero ── -->
+<section class="hero-section">
+  <div class="hero-blob hero-blob-1"></div>
+  <div class="hero-blob hero-blob-2"></div>
+  <div class="hero-blob hero-blob-3"></div>
+  <div class="container position-relative" style="z-index:2">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6">
+        <div class="hero-badge">
+          <span class="dot"></span>
+          Circular Economy Platform
+        </div>
+        <h1 class="hero-title">
+          Turn Industrial Waste Into
+          <span class="highlight">Valuable Resources</span>
+        </h1>
+        <p class="hero-desc">
+          EcoLoop connects industries that produce reusable waste with industries that need
+          those materials — reducing costs, cutting waste, and building a sustainable future
+          powered by AI.
+        </p>
+        <div class="hero-actions d-flex flex-wrap gap-3">
+          <a href="{% url 'register' %}" class="btn-hero-primary">
+            <i class="bi bi-rocket-takeoff"></i>Get Started Free
+          </a>
+          <a href="{% url 'marketplace' %}" class="btn-hero-outline">
+            <i class="bi bi-shop"></i>Browse Marketplace
+          </a>
+        </div>
+        <div class="hero-trust">
+          <div class="hero-trust-item"><i class="bi bi-check-circle-fill"></i>Free to join</div>
+          <div class="hero-trust-item"><i class="bi bi-check-circle-fill"></i>AI-powered matching</div>
+          <div class="hero-trust-item"><i class="bi bi-check-circle-fill"></i>Verified industries</div>
+        </div>
+      </div>
+      <div class="col-lg-6 hero-stats-grid">
+        <div class="row g-3">
+          <div class="col-6">
+            <div class="hero-stat-card">
+              <div class="hero-stat-value counter">{{ stats.total_listings }}</div>
+              <div class="hero-stat-label">Active Listings</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="hero-stat-card">
+              <div class="hero-stat-value counter">{{ stats.total_suppliers }}</div>
+              <div class="hero-stat-label">Suppliers</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="hero-stat-card">
+              <div class="hero-stat-value counter">{{ stats.total_buyers }}</div>
+              <div class="hero-stat-label">Buyers</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="hero-stat-card">
+              <div class="hero-stat-value counter">{{ stats.completed_exchanges }}</div>
+              <div class="hero-stat-label">Exchanges Done</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── How It Works ── -->
+<section class="py-5 bg-eco-light">
+  <div class="container py-3">
+    <div class="text-center mb-5 reveal">
+      <div class="section-label"><i class="bi bi-diagram-3"></i>Simple Process</div>
+      <h2 class="section-title">How EcoLoop Works</h2>
+      <p class="text-muted mt-2">Three simple steps to a circular economy</p>
+    </div>
+    <div class="row g-4 text-center">
+      <div class="col-md-4 reveal delay-1">
+        <div class="step-wrap">
+          <div class="step-circle"><i class="bi bi-building-add"></i></div>
+          <h5 class="fw-bold mb-2">1. Register Your Industry</h5>
+          <p class="text-muted small">Sign up as a supplier or buyer. Create your industry profile with company details and location.</p>
+        </div>
+      </div>
+      <div class="col-md-4 reveal delay-2">
+        <div class="step-wrap">
+          <div class="step-circle"><i class="bi bi-list-ul"></i></div>
+          <h5 class="fw-bold mb-2">2. List or Discover Materials</h5>
+          <p class="text-muted small">Suppliers list waste materials. Buyers search and get AI-powered recommendations for suitable materials.</p>
+        </div>
+      </div>
+      <div class="col-md-4 reveal delay-3">
+        <div class="step-wrap">
+          <div class="step-circle"><i class="bi bi-arrow-left-right"></i></div>
+          <h5 class="fw-bold mb-2">3. Exchange &amp; Track</h5>
+          <p class="text-muted small">Submit purchase requests, negotiate, and complete exchanges. Track all transactions in your dashboard.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Categories ── -->
+{% if categories %}
+<section class="py-5">
+  <div class="container py-3">
+    <div class="d-flex justify-content-between align-items-center mb-4 reveal">
+      <div>
+        <div class="section-label"><i class="bi bi-grid-3x3-gap"></i>Browse by Type</div>
+        <h2 class="section-title mb-0">Material Categories</h2>
+      </div>
+      <a href="{% url 'marketplace' %}" class="btn btn-eco btn-sm px-3">
+        View All <i class="bi bi-arrow-right ms-1"></i>
+      </a>
+    </div>
+    <div class="row g-3">
+      {% for cat in categories %}
+      <div class="col-6 col-md-4 col-lg-2 reveal delay-{{ forloop.counter }}">
+        <a href="{% url 'marketplace' %}?category={{ cat.slug }}" class="cat-card">
+          <div class="cat-icon"><i class="bi {{ cat.icon }}"></i></div>
+          <div class="fw-semibold small mb-1">{{ cat.name }}</div>
+          <div class="text-muted" style="font-size:0.72rem">{{ cat.count }} listing{{ cat.count|pluralize }}</div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ── Recent Listings ── -->
+{% if recent_listings %}
+<section class="py-5 bg-eco-light">
+  <div class="container py-3">
+    <div class="d-flex justify-content-between align-items-center mb-4 reveal">
+      <div>
+        <div class="section-label"><i class="bi bi-clock-history"></i>Latest</div>
+        <h2 class="section-title mb-0">Recent Listings</h2>
+      </div>
+      <a href="{% url 'marketplace' %}" class="btn btn-eco btn-sm px-3">
+        Browse All <i class="bi bi-arrow-right ms-1"></i>
+      </a>
+    </div>
+    <div class="row g-4">
+      {% for listing in recent_listings %}
+      <div class="col-md-6 col-lg-4 reveal delay-{{ forloop.counter }}">
+        <div class="card listing-card h-100">
+          <div class="img-wrap">
+            {% if listing.image %}
+            <img src="{{ listing.image.url }}" class="card-img-top" alt="{{ listing.title }}">
+            {% else %}
+            <div class="listing-placeholder"><i class="bi {{ listing.category.icon }}"></i></div>
+            {% endif %}
+            <span class="badge position-absolute" style="top:12px;right:12px;background:rgba(0,0,0,0.55);color:#fff;border-radius:6px;padding:4px 8px;font-size:0.72rem;font-weight:600;backdrop-filter:blur(4px)">
+              Grade {{ listing.quality_grade }}
+            </span>
+          </div>
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <span class="badge-cat">{{ listing.category.name }}</span>
+              <span class="status-badge badge-{{ listing.status }}">{{ listing.get_status_display }}</span>
+            </div>
+            <h6 class="fw-bold mb-1">{{ listing.title }}</h6>
+            <p class="text-muted small mb-3" style="line-height:1.5">{{ listing.description|truncatechars:80 }}</p>
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <div class="fw-bold text-eco-green" style="font-size:1.05rem">&#8377;{{ listing.price_per_kg }}/kg</div>
+                <div class="text-muted small">{{ listing.quantity }} kg available</div>
+              </div>
+              <div class="text-end">
+                <div class="text-muted small"><i class="bi bi-geo-alt me-1 text-eco-green"></i>{{ listing.city }}</div>
+                <div class="text-muted small">{{ listing.state }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <a href="{% url 'listing_detail' listing.pk %}" class="btn btn-eco btn-sm w-100">
+              View Details <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ── Why EcoLoop ── -->
+<section class="py-5">
+  <div class="container py-3">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6 reveal-left">
+        <div class="section-label"><i class="bi bi-stars"></i>Why EcoLoop</div>
+        <h2 class="section-title mb-4">Built for the Circular Economy</h2>
+        <div class="d-flex gap-3 mb-4">
+          <div class="flex-shrink-0">
+            <div class="step-circle" style="width:52px;height:52px;font-size:1.2rem">
+              <i class="bi bi-cpu"></i>
+            </div>
+          </div>
+          <div>
+            <h6 class="fw-bold mb-1">AI-Powered Matching</h6>
+            <p class="text-muted small mb-0">Our recommendation engine uses TF-IDF text similarity and multi-factor scoring to match buyers with the most relevant suppliers.</p>
+          </div>
+        </div>
+        <div class="d-flex gap-3 mb-4">
+          <div class="flex-shrink-0">
+            <div class="step-circle" style="width:52px;height:52px;font-size:1.2rem">
+              <i class="bi bi-shield-check"></i>
+            </div>
+          </div>
+          <div>
+            <h6 class="fw-bold mb-1">Verified Industries</h6>
+            <p class="text-muted small mb-0">All registered companies are reviewed. Secure authentication and role-based access protect your data.</p>
+          </div>
+        </div>
+        <div class="d-flex gap-3">
+          <div class="flex-shrink-0">
+            <div class="step-circle" style="width:52px;height:52px;font-size:1.2rem">
+              <i class="bi bi-bar-chart-line"></i>
+            </div>
+          </div>
+          <div>
+            <h6 class="fw-bold mb-1">Real-Time Analytics</h6>
+            <p class="text-muted small mb-0">Track platform activity, material exchanges, and environmental impact through interactive dashboards.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 reveal-right">
+        <div class="card p-4" style="background:linear-gradient(135deg,var(--eco-green-dark),var(--eco-green));border:none;color:#fff">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <div style="width:40px;height:40px;background:rgba(255,255,255,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem">
+              <i class="bi bi-recycle"></i>
+            </div>
+            <h5 class="fw-bold mb-0">Circular Economy Impact</h5>
+          </div>
+          <p class="small mb-3" style="color:rgba(255,255,255,0.82)">
+            EcoLoop promotes the circular economy by keeping materials in use for as long as possible,
+            extracting maximum value before recovery and regeneration.
+          </p>
+          <ul class="list-unstyled small mb-4">
+            <li class="mb-2 d-flex align-items-center gap-2">
+              <i class="bi bi-check-circle-fill text-eco-light"></i>Reduce industrial landfill waste
+            </li>
+            <li class="mb-2 d-flex align-items-center gap-2">
+              <i class="bi bi-check-circle-fill text-eco-light"></i>Lower raw material procurement costs
+            </li>
+            <li class="mb-2 d-flex align-items-center gap-2">
+              <i class="bi bi-check-circle-fill text-eco-light"></i>Create new revenue from waste streams
+            </li>
+            <li class="d-flex align-items-center gap-2">
+              <i class="bi bi-check-circle-fill text-eco-light"></i>Support sustainable manufacturing
+            </li>
+          </ul>
+          <a href="{% url 'register' %}" class="btn-hero-primary" style="display:inline-flex;align-items:center;gap:8px;padding:0.7rem 1.5rem;font-size:0.9rem">
+            <i class="bi bi-rocket-takeoff"></i>Join EcoLoop Today
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section class="py-5" style="background:linear-gradient(135deg,var(--eco-green-dark),var(--eco-green),#1abc9c)">
+  <div class="container py-3 text-center reveal">
+    <div class="hero-badge mx-auto mb-3" style="width:fit-content">
+      <span class="dot"></span>Ready to Start?
+    </div>
+    <h2 class="fw-bold text-white mb-3" style="font-size:clamp(1.6rem,3vw,2.4rem)">Ready to Close the Loop?</h2>
+    <p class="mb-4" style="color:rgba(255,255,255,0.78);font-size:1.05rem">
+      Join industries already exchanging materials on EcoLoop.
+    </p>
+    <div class="d-flex justify-content-center gap-3 flex-wrap">
+      <a href="{% url 'register' %}" class="btn-hero-primary">
+        <i class="bi bi-building"></i>Register as Supplier
+      </a>
+      <a href="{% url 'register' %}" class="btn-hero-outline">
+        <i class="bi bi-search"></i>Register as Buyer
+      </a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

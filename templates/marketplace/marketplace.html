@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% block title %}Marketplace{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+      <div>
+        <div class="hero-badge mb-2" style="width:fit-content">
+          <i class="bi bi-shop me-1"></i>Browse Materials
+        </div>
+        <h1 class="fw-bold mb-1" style="color:#fff">Marketplace</h1>
+        <p style="color:rgba(255,255,255,0.75);margin:0">Discover available industrial waste materials</p>
+      </div>
+      {% if user.is_authenticated and user.profile.is_buyer %}
+      <a href="{% url 'recommendations' %}" class="btn-hero-primary" style="font-size:0.9rem;padding:0.65rem 1.4rem">
+        <i class="bi bi-stars"></i>AI Recommendations
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="container py-4">
+
+  <!-- Filter Card -->
+  <div class="card p-3 mb-4 reveal">
+    <form method="get" class="row g-2 align-items-end">
+      <div class="col-md-3">
+        <label class="form-label fw-semibold" style="font-size:0.78rem">Search</label>
+        {{ form.q }}
+      </div>
+      <div class="col-md-2">
+        <label class="form-label fw-semibold" style="font-size:0.78rem">Category</label>
+        <select name="category" class="form-select">
+          <option value="">All Categories</option>
+          {% for cat in categories %}
+          <option value="{{ cat.slug }}" {% if request.GET.category == cat.slug %}selected{% endif %}>
+            {{ cat.name }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label fw-semibold" style="font-size:0.78rem">State</label>
+        {{ form.state }}
+      </div>
+      <div class="col-md-2">
+        <label class="form-label fw-semibold" style="font-size:0.78rem">Min Qty (kg)</label>
+        {{ form.min_qty }}
+      </div>
+      <div class="col-md-2">
+        <label class="form-label fw-semibold" style="font-size:0.78rem">Max Price/kg</label>
+        {{ form.max_price }}
+      </div>
+      <div class="col-md-1">
+        <button type="submit" class="btn btn-eco w-100">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label fw-semibold" style="font-size:0.78rem">Sort By</label>
+        {{ form.sort }}
+      </div>
+      {% if request.GET %}
+      <div class="col-auto">
+        <a href="{% url 'marketplace' %}" class="btn btn-outline-secondary btn-sm">
+          <i class="bi bi-x-circle me-1"></i>Clear
+        </a>
+      </div>
+      {% endif %}
+    </form>
+  </div>
+
+  <!-- Results count -->
+  <div class="d-flex justify-content-between align-items-center mb-3 reveal">
+    <p class="text-muted mb-0 small fw-semibold">
+      <i class="bi bi-grid me-1 text-eco-green"></i>
+      {{ total_count }} listing{{ total_count|pluralize }} found
+    </p>
+  </div>
+
+  {% if page_obj %}
+  <div class="row g-4">
+    {% for listing in page_obj %}
+    <div class="col-md-6 col-lg-4 reveal delay-{{ forloop.counter|add:0 }}">
+      <div class="card listing-card h-100">
+        <div class="img-wrap position-relative">
+          {% if listing.image %}
+          <img src="{{ listing.image.url }}" class="card-img-top" alt="{{ listing.title }}">
+          {% else %}
+          <div class="listing-placeholder"><i class="bi {{ listing.category.icon }}"></i></div>
+          {% endif %}
+          <span class="badge position-absolute" style="top:12px;left:12px;background:rgba(0,0,0,0.55);color:#fff;border-radius:6px;padding:4px 8px;font-size:0.72rem;backdrop-filter:blur(4px)">
+            Grade {{ listing.quality_grade }}
+          </span>
+          {% if user.is_authenticated %}
+          <a href="{% url 'toggle_favourite' listing.pk %}" class="fav-btn position-absolute"
+             data-url="{% url 'toggle_favourite' listing.pk %}"
+             style="top:10px;right:10px;width:34px;height:34px;background:rgba(255,255,255,0.9);border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;transition:all 0.2s;box-shadow:0 2px 8px rgba(0,0,0,0.15)">
+            <i class="bi bi-heart{% if listing.pk in favourites %}-fill text-danger{% else %} text-muted{% endif %}"></i>
+          </a>
+          {% endif %}
+        </div>
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <span class="badge-cat">{{ listing.category.name }}</span>
+            <span class="status-badge badge-{{ listing.status }}">{{ listing.get_status_display }}</span>
+          </div>
+          <h6 class="fw-bold mb-1">{{ listing.title }}</h6>
+          <p class="text-muted small mb-3" style="line-height:1.5">{{ listing.description|truncatechars:80 }}</p>
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <div class="fw-bold text-eco-green" style="font-size:1.05rem">&#8377;{{ listing.price_per_kg }}/kg</div>
+              <div class="text-muted small">{{ listing.quantity }} kg</div>
+            </div>
+            <div class="text-end">
+              <div class="text-muted small"><i class="bi bi-geo-alt me-1 text-eco-green"></i>{{ listing.city }}</div>
+              <div class="text-muted small">{{ listing.state }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <a href="{% url 'listing_detail' listing.pk %}" class="btn btn-eco btn-sm w-100">
+            View Details <i class="bi bi-arrow-right ms-1"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% if page_obj.has_other_pages %}
+  <nav class="mt-5 reveal">
+    <ul class="pagination justify-content-center gap-1">
+      {% if page_obj.has_previous %}
+      <li class="page-item">
+        <a class="page-link rounded-3" href="?{% for k,v in request.GET.items %}{% if k != 'page' %}{{ k }}={{ v }}&{% endif %}{% endfor %}page={{ page_obj.previous_page_number }}">
+          <i class="bi bi-chevron-left"></i>
+        </a>
+      </li>
+      {% endif %}
+      {% for num in page_obj.paginator.page_range %}
+      <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+        <a class="page-link rounded-3" href="?{% for k,v in request.GET.items %}{% if k != 'page' %}{{ k }}={{ v }}&{% endif %}{% endfor %}page={{ num }}">{{ num }}</a>
+      </li>
+      {% endfor %}
+      {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link rounded-3" href="?{% for k,v in request.GET.items %}{% if k != 'page' %}{{ k }}={{ v }}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}">
+          <i class="bi bi-chevron-right"></i>
+        </a>
+      </li>
+      {% endif %}
+    </ul>
+  </nav>
+  {% endif %}
+
+  {% else %}
+  <div class="text-center py-5 reveal">
+    <div style="width:90px;height:90px;background:var(--eco-bg);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:2.2rem;color:var(--eco-green)">
+      <i class="bi bi-search"></i>
+    </div>
+    <h5 class="fw-bold mb-2">No listings found</h5>
+    <p class="text-muted mb-4">Try adjusting your search filters.</p>
+    <a href="{% url 'marketplace' %}" class="btn btn-eco px-4">
+      <i class="bi bi-x-circle me-2"></i>Clear Filters
+    </a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

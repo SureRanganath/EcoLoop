@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div style="min-height:80vh;background:linear-gradient(135deg,var(--eco-bg) 0%,#fff 100%);display:flex;align-items:center;padding:3rem 0">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-5 col-lg-4">
+        <div class="card p-4 p-md-5" style="border-radius:var(--radius-xl)">
+          <div class="text-center mb-4">
+            <div style="width:64px;height:64px;background:linear-gradient(135deg,var(--eco-green),var(--eco-teal));border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:1.8rem;color:#fff;box-shadow:0 8px 24px rgba(30,132,73,0.35)">
+              <i class="bi bi-recycle"></i>
+            </div>
+            <h2 class="fw-bold mb-1">Welcome Back</h2>
+            <p class="text-muted small">Sign in to your EcoLoop account</p>
+          </div>
+          <form method="post" novalidate>
+            {% csrf_token %}
+            <div class="mb-3">
+              <label class="form-label">Username</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                {{ form.username }}
+              </div>
+              {% if form.username.errors %}
+              <div class="text-danger small mt-1">{{ form.username.errors.0 }}</div>
+              {% endif %}
+            </div>
+            <div class="mb-4">
+              <label class="form-label">Password</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                {{ form.password }}
+              </div>
+              {% if form.password.errors %}
+              <div class="text-danger small mt-1">{{ form.password.errors.0 }}</div>
+              {% endif %}
+            </div>
+            <button type="submit" class="btn btn-eco btn-lg w-100 fw-semibold">
+              <i class="bi bi-box-arrow-in-right me-2"></i>Login
+            </button>
+          </form>
+          <p class="text-center text-muted mt-4 mb-0 small">
+            Don't have an account?
+            <a href="{% url 'register' %}" class="text-eco-green fw-semibold text-decoration-none">Register free</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% block title %}AI Recommendations{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1 class="fw-bold mb-2"><i class="bi bi-stars me-2"></i>AI Material Recommendations</h1>
+    <p class="opacity-75 mb-0">Describe what you need — our engine finds the best matches</p>
+  </div>
+</div>
+
+<div class="container py-4">
+  <div class="row g-4">
+    <!-- Search Form -->
+    <div class="col-lg-4">
+      <div class="card p-4 sticky-top" style="top:80px">
+        <h5 class="fw-bold mb-3 section-header">Search Criteria</h5>
+        <form method="get" novalidate>
+          {% for field in form %}
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}<div class="text-danger small">{{ field.errors.0 }}</div>{% endif %}
+          </div>
+          {% endfor %}
+          <button type="submit" class="btn btn-eco w-100 fw-semibold">
+            <i class="bi bi-stars me-2"></i>Get Recommendations
+          </button>
+        </form>
+
+        <hr class="my-3">
+        <div class="small">
+          <h6 class="fw-semibold mb-2">How Scoring Works</h6>
+          {% for label, pct in weights.items %}
+          <div class="d-flex justify-content-between mb-1">
+            <span class="text-muted">{{ label }}</span>
+            <span class="fw-semibold">{{ pct }}%</span>
+          </div>
+          {% endfor %}
+          <p class="text-muted mt-2 mb-0" style="font-size:0.75rem">
+            Scores combine TF-IDF text similarity with category, quantity, price, and location compatibility. This is a content-based approach — no pretrained model accuracy is claimed.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="col-lg-8">
+      {% if searched %}
+        {% if results %}
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="fw-bold mb-0">{{ results|length }} Recommendation{{ results|length|pluralize }} Found</h5>
+          <span class="badge bg-eco text-white">Ranked by relevance</span>
+        </div>
+        {% for item in results %}
+        <div class="card p-4 mb-3 fade-in-up">
+          <div class="d-flex gap-3 align-items-start">
+            <div class="rec-score-badge flex-shrink-0">{{ item.score }}%</div>
+            <div class="flex-grow-1">
+              <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
+                <div>
+                  <h6 class="fw-bold mb-1">
+                    <a href="{% url 'listing_detail' item.listing.pk %}" class="text-decoration-none text-dark">
+                      {{ item.listing.title }}
+                    </a>
+                  </h6>
+                  <span class="badge bg-success-subtle text-success me-1">{{ item.listing.category.name }}</span>
+                  <span class="badge bg-light text-dark">Grade {{ item.listing.quality_grade }}</span>
+                </div>
+                <div class="text-end">
+                  <div class="fw-bold text-eco-green">&#8377;{{ item.listing.price_per_kg }}/kg</div>
+                  <div class="text-muted small">{{ item.listing.quantity }} kg available</div>
+                </div>
+              </div>
+
+              <p class="text-muted small mb-2">{{ item.listing.description|truncatechars:120 }}</p>
+
+              <div class="d-flex align-items-center gap-2 mb-2 text-muted small">
+                <i class="bi bi-geo-alt text-eco-green"></i>
+                {{ item.listing.city }}, {{ item.listing.state }}
+                <span class="mx-1">|</span>
+                <i class="bi bi-building text-eco-green"></i>
+                {{ item.listing.supplier.profile.company_name }}
+              </div>
+
+              <!-- Score breakdown -->
+              <div class="bg-eco-light rounded p-2 mb-2">
+                <div class="small fw-semibold mb-1 text-eco-green"><i class="bi bi-lightbulb me-1"></i>Why recommended:</div>
+                <p class="small text-muted mb-2">{{ item.explanation }}</p>
+                <div class="row g-1">
+                  <div class="col-6">
+                    <div class="d-flex justify-content-between small mb-1">
+                      <span class="text-muted">Text Match</span><span>{{ item.text_sim }}%</span>
+                    </div>
+                    <div class="score-bar"><div class="score-fill" style="width:{{ item.text_sim }}%"></div></div>
+                  </div>
+                  <div class="col-6">
+                    <div class="d-flex justify-content-between small mb-1">
+                      <span class="text-muted">Category</span><span>{{ item.cat_match }}%</span>
+                    </div>
+                    <div class="score-bar"><div class="score-fill" style="width:{{ item.cat_match }}%"></div></div>
+                  </div>
+                  <div class="col-6">
+                    <div class="d-flex justify-content-between small mb-1">
+                      <span class="text-muted">Quantity</span><span>{{ item.qty_score }}%</span>
+                    </div>
+                    <div class="score-bar"><div class="score-fill" style="width:{{ item.qty_score }}%"></div></div>
+                  </div>
+                  <div class="col-6">
+                    <div class="d-flex justify-content-between small mb-1">
+                      <span class="text-muted">Location</span><span>{{ item.loc_score }}%</span>
+                    </div>
+                    <div class="score-bar"><div class="score-fill" style="width:{{ item.loc_score }}%"></div></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="d-flex gap-2">
+                <a href="{% url 'listing_detail' item.listing.pk %}" class="btn btn-eco btn-sm">View Details</a>
+                {% if user.profile.is_buyer %}
+                <a href="{% url 'submit_request' item.listing.pk %}" class="btn btn-outline-success btn-sm">Request to Buy</a>
+                {% endif %}
+                <a href="{% url 'toggle_favourite' item.listing.pk %}" class="btn btn-outline-danger btn-sm"><i class="bi bi-heart"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+
+        {% else %}
+        <div class="text-center py-5">
+          <i class="bi bi-search fs-1 text-muted d-block mb-3"></i>
+          <h5 class="text-muted">No matching listings found</h5>
+          <p class="text-muted">Try broadening your search — remove category or location filters.</p>
+          <a href="{% url 'marketplace' %}" class="btn btn-eco mt-2">Browse All Listings</a>
+        </div>
+        {% endif %}
+      {% else %}
+      <div class="text-center py-5">
+        <i class="bi bi-stars fs-1 text-eco-green d-block mb-3"></i>
+        <h5 class="fw-bold">Describe What You Need</h5>
+        <p class="text-muted">Fill in the search form to get AI-powered material recommendations tailored to your requirements.</p>
+        <div class="row g-3 mt-3 text-start">
+          <div class="col-md-4">
+            <div class="card p-3 h-100">
+              <i class="bi bi-file-text text-eco-green fs-4 mb-2"></i>
+              <h6 class="fw-semibold">Text Similarity</h6>
+              <p class="text-muted small mb-0">TF-IDF cosine similarity matches your description against all available material listings.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card p-3 h-100">
+              <i class="bi bi-sliders text-eco-green fs-4 mb-2"></i>
+              <h6 class="fw-semibold">Multi-Factor Scoring</h6>
+              <p class="text-muted small mb-0">Category, quantity, price, and location are combined with configurable weights.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card p-3 h-100">
+              <i class="bi bi-lightbulb text-eco-green fs-4 mb-2"></i>
+              <h6 class="fw-semibold">Explainable Results</h6>
+              <p class="text-muted small mb-0">Each recommendation shows exactly why it was suggested with a score breakdown.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

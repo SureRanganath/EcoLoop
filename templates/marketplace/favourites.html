@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Saved Listings{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1 class="fw-bold mb-2"><i class="bi bi-heart me-2"></i>Saved Listings</h1>
+    <p class="opacity-75 mb-0">Your favourite material listings</p>
+  </div>
+</div>
+<div class="container py-4">
+  {% if favourites %}
+  <div class="row g-4">
+    {% for fav in favourites %}
+    <div class="col-md-6 col-lg-4">
+      <div class="card listing-card h-100">
+        <div class="listing-placeholder"><i class="bi {{ fav.listing.category.icon }}"></i></div>
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <span class="badge bg-success-subtle text-success small">{{ fav.listing.category.name }}</span>
+            <a href="{% url 'toggle_favourite' fav.listing.pk %}" class="text-danger text-decoration-none" title="Remove from saved">
+              <i class="bi bi-heart-fill"></i>
+            </a>
+          </div>
+          <h6 class="card-title fw-semibold">{{ fav.listing.title }}</h6>
+          <p class="card-text text-muted small">{{ fav.listing.description|truncatechars:80 }}</p>
+          <div class="d-flex justify-content-between align-items-center mt-2">
+            <div>
+              <div class="fw-bold text-eco-green">&#8377;{{ fav.listing.price_per_kg }}/kg</div>
+              <div class="text-muted small">{{ fav.listing.quantity }} kg</div>
+            </div>
+            <div class="text-end text-muted small">
+              <div>{{ fav.listing.city }}</div>
+              <div>{{ fav.listing.state }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer bg-transparent border-0 pt-0">
+          <a href="{% url 'listing_detail' fav.listing.pk %}" class="btn btn-eco btn-sm w-100">View Details</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="text-center py-5">
+    <i class="bi bi-heart fs-1 text-muted d-block mb-3"></i>
+    <h5 class="text-muted">No saved listings yet</h5>
+    <a href="{% url 'marketplace' %}" class="btn btn-eco mt-2">Browse Marketplace</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

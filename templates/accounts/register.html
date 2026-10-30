@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card p-4 p-md-5">
+        <div class="text-center mb-4">
+          <span class="brand-icon fs-1"><i class="bi bi-recycle"></i></span>
+          <h2 class="fw-bold mt-2">Join EcoLoop</h2>
+          <p class="text-muted">Create your industry account</p>
+        </div>
+        <form method="post" novalidate>
+          {% csrf_token %}
+          <div class="row g-3">
+            <div class="col-12">
+              <h6 class="fw-semibold text-eco-green border-bottom pb-2 mb-3"><i class="bi bi-person me-2"></i>Account Details</h6>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">First Name *</label>
+              {{ form.first_name }}
+              {% if form.first_name.errors %}<div class="text-danger small">{{ form.first_name.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Last Name *</label>
+              {{ form.last_name }}
+              {% if form.last_name.errors %}<div class="text-danger small">{{ form.last_name.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Username *</label>
+              {{ form.username }}
+              {% if form.username.errors %}<div class="text-danger small">{{ form.username.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Email *</label>
+              {{ form.email }}
+              {% if form.email.errors %}<div class="text-danger small">{{ form.email.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Password *</label>
+              {{ form.password1 }}
+              {% if form.password1.errors %}<div class="text-danger small">{{ form.password1.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Confirm Password *</label>
+              {{ form.password2 }}
+              {% if form.password2.errors %}<div class="text-danger small">{{ form.password2.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-12 mt-3">
+              <h6 class="fw-semibold text-eco-green border-bottom pb-2 mb-3"><i class="bi bi-building me-2"></i>Industry Details</h6>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">I am a *</label>
+              {{ form.role }}
+              {% if form.role.errors %}<div class="text-danger small">{{ form.role.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Company Name *</label>
+              {{ form.company_name }}
+              {% if form.company_name.errors %}<div class="text-danger small">{{ form.company_name.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Industry Type *</label>
+              {{ form.industry_type }}
+              {% if form.industry_type.errors %}<div class="text-danger small">{{ form.industry_type.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Phone</label>
+              {{ form.phone }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">City *</label>
+              {{ form.city }}
+              {% if form.city.errors %}<div class="text-danger small">{{ form.city.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">State *</label>
+              {{ form.state }}
+              {% if form.state.errors %}<div class="text-danger small">{{ form.state.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-12 mt-3">
+              <button type="submit" class="btn btn-eco btn-lg w-100 fw-semibold">
+                <i class="bi bi-person-plus me-2"></i>Create Account
+              </button>
+            </div>
+          </div>
+        </form>
+        <p class="text-center text-muted mt-3 mb-0">Already have an account? <a href="{% url 'login' %}" class="text-eco-green fw-semibold">Login</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

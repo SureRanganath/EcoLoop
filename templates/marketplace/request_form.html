@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}Submit Purchase Request{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1 class="fw-bold mb-2"><i class="bi bi-send me-2"></i>Submit Purchase Request</h1>
+    <p class="opacity-75 mb-0">Request to purchase: {{ listing.title }}</p>
+  </div>
+</div>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-7">
+      <div class="card p-4 mb-4 bg-eco-light border-0">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="text-muted small">Material</div>
+            <div class="fw-semibold">{{ listing.title }}</div>
+          </div>
+          <div class="col-md-3">
+            <div class="text-muted small">Available</div>
+            <div class="fw-semibold">{{ listing.quantity }} kg</div>
+          </div>
+          <div class="col-md-3">
+            <div class="text-muted small">Listed Price</div>
+            <div class="fw-semibold text-eco-green">&#8377;{{ listing.price_per_kg }}/kg</div>
+          </div>
+          <div class="col-md-6">
+            <div class="text-muted small">Supplier</div>
+            <div class="fw-semibold">{{ listing.supplier.profile.company_name }}</div>
+          </div>
+          <div class="col-md-6">
+            <div class="text-muted small">Location</div>
+            <div class="fw-semibold">{{ listing.city }}, {{ listing.state }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-4">
+        <h5 class="fw-bold mb-4 section-header">Your Request Details</h5>
+        <form method="post" novalidate>
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Quantity Required (kg) *</label>
+            {{ form.requested_quantity }}
+            {% if form.requested_quantity.help_text %}<div class="form-text">{{ form.requested_quantity.help_text }}</div>{% endif %}
+            {% if form.requested_quantity.errors %}<div class="text-danger small">{{ form.requested_quantity.errors.0 }}</div>{% endif %}
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Proposed Price per kg (&#8377;) <span class="text-muted fw-normal">(optional)</span></label>
+            {{ form.proposed_price }}
+            {% if form.proposed_price.help_text %}<div class="form-text">{{ form.proposed_price.help_text }}</div>{% endif %}
+          </div>
+          <div class="mb-4">
+            <label class="form-label fw-semibold">Message to Supplier <span class="text-muted fw-normal">(optional)</span></label>
+            {{ form.message }}
+          </div>
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-eco px-4 fw-semibold">
+              <i class="bi bi-send me-2"></i>Submit Request
+            </button>
+            <a href="{% url 'listing_detail' listing.pk %}" class="btn btn-outline-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

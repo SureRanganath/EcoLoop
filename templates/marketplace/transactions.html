@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Transaction History{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1 class="fw-bold mb-2"><i class="bi bi-clock-history me-2"></i>Transaction History</h1>
+    <p class="opacity-75 mb-0">Completed material exchanges</p>
+  </div>
+</div>
+<div class="container py-4">
+  {% if transactions %}
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-eco align-middle mb-0">
+        <thead>
+          <tr>
+            <th>Material</th>
+            <th>{% if profile.is_buyer %}Supplier{% else %}Buyer{% endif %}</th>
+            <th>Qty (kg)</th>
+            <th>Price/kg</th>
+            <th>Total Value</th>
+            <th>Completed</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for tx in transactions %}
+          <tr>
+            <td>
+              <a href="{% url 'listing_detail' tx.listing.pk %}" class="text-decoration-none fw-semibold text-dark">
+                {{ tx.listing.title|truncatechars:30 }}
+              </a>
+              <div class="text-muted" style="font-size:0.75rem">{{ tx.listing.category.name }}</div>
+            </td>
+            {% if profile.is_buyer %}
+            <td class="small">{{ tx.listing.supplier.profile.company_name|truncatechars:25 }}</td>
+            {% else %}
+            <td class="small">{{ tx.buyer.profile.company_name|truncatechars:25 }}</td>
+            {% endif %}
+            <td class="small">{{ tx.requested_quantity }}</td>
+            <td class="small">&#8377;{% if tx.proposed_price %}{{ tx.proposed_price }}{% else %}{{ tx.listing.price_per_kg }}{% endif %}</td>
+            <td class="small fw-semibold text-eco-green">
+              &#8377;{% if tx.proposed_price %}{{ tx.requested_quantity|floatformat:2 }}{% else %}{{ tx.listing.price_per_kg|floatformat:2 }}{% endif %}
+            </td>
+            <td class="small text-muted">{{ tx.updated_at|date:"d M Y" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% else %}
+  <div class="text-center py-5">
+    <i class="bi bi-clock-history fs-1 text-muted d-block mb-3"></i>
+    <h5 class="text-muted">No completed transactions yet</h5>
+    {% if profile.is_buyer %}
+    <a href="{% url 'marketplace' %}" class="btn btn-eco mt-2">Browse Marketplace</a>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

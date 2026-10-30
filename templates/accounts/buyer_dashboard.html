@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+{% block title %}Buyer Dashboard{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+      <div>
+        <div class="hero-badge mb-2" style="width:fit-content">
+          <i class="bi bi-search me-1"></i>Buyer Account
+        </div>
+        <h1 class="fw-bold mb-1" style="color:#fff">Welcome back, {{ request.user.first_name }}!</h1>
+        <p style="color:rgba(255,255,255,0.75);margin:0">
+          <i class="bi bi-building me-1"></i>{{ profile.company_name }}
+          &bull; {{ profile.city }}, {{ profile.state }}
+        </p>
+      </div>
+      <a href="{% url 'recommendations' %}" class="btn-hero-primary" style="font-size:0.9rem;padding:0.65rem 1.4rem">
+        <i class="bi bi-stars"></i>Get AI Recommendations
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="container py-4">
+
+  <!-- Stats -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3 reveal delay-1">
+      <div class="stat-card">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <div class="stat-value text-eco-green counter">{{ total_requests }}</div>
+            <div class="stat-label">Total Requests</div>
+            <div class="stat-trend neutral"><i class="bi bi-send me-1"></i>All time</div>
+          </div>
+          <div class="stat-icon bg-eco-light text-eco-green"><i class="bi bi-send"></i></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3 reveal delay-2">
+      <div class="stat-card">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <div class="stat-value text-warning counter">{{ pending_requests }}</div>
+            <div class="stat-label">Pending</div>
+            <div class="stat-trend neutral"><i class="bi bi-clock me-1"></i>Awaiting reply</div>
+          </div>
+          <div class="stat-icon bg-warning-subtle text-warning"><i class="bi bi-clock"></i></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3 reveal delay-3">
+      <div class="stat-card">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <div class="stat-value text-success counter">{{ completed_exchanges }}</div>
+            <div class="stat-label">Completed</div>
+            <div class="stat-trend up"><i class="bi bi-check-circle me-1"></i>Exchanges done</div>
+          </div>
+          <div class="stat-icon bg-success-subtle text-success"><i class="bi bi-check-circle"></i></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3 reveal delay-4">
+      <div class="stat-card">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <div class="stat-value text-danger counter">{{ saved_listings }}</div>
+            <div class="stat-label">Saved</div>
+            <div class="stat-trend neutral"><i class="bi bi-heart me-1"></i>Favourites</div>
+          </div>
+          <div class="stat-icon bg-danger-subtle text-danger"><i class="bi bi-heart"></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- My Requests -->
+    <div class="col-lg-7 reveal">
+      <div class="card p-4 h-100">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="fw-bold mb-0 section-header">My Purchase Requests</h5>
+          <a href="{% url 'my_requests' %}" class="btn btn-eco btn-sm px-3">View All</a>
+        </div>
+        {% if my_requests %}
+        <div class="table-responsive">
+          <table class="table table-eco align-middle mb-0">
+            <thead>
+              <tr><th>Material</th><th>Qty (kg)</th><th>Status</th><th></th></tr>
+            </thead>
+            <tbody>
+              {% for req in my_requests %}
+              <tr>
+                <td>
+                  <div class="fw-semibold small">{{ req.listing.title|truncatechars:28 }}</div>
+                  <div class="text-muted" style="font-size:0.72rem">
+                    {{ req.listing.supplier.profile.company_name|truncatechars:22 }}
+                  </div>
+                </td>
+                <td class="small fw-semibold">{{ req.requested_quantity }}</td>
+                <td><span class="status-badge badge-{{ req.status }}">{{ req.get_status_display }}</span></td>
+                <td>
+                  <a href="{% url 'listing_detail' req.listing.pk %}" class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-eye"></i>
+                  </a>
+                  {% if req.status == 'pending' %}
+                  <form method="post" action="{% url 'cancel_request' req.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <button class="btn btn-sm btn-outline-danger ms-1" onclick="return confirm('Cancel this request?')">
+                      <i class="bi bi-x"></i>
+                    </button>
+                  </form>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+          <div style="width:72px;height:72px;background:var(--eco-bg);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:1.8rem;color:var(--eco-green)">
+            <i class="bi bi-inbox"></i>
+          </div>
+          <p class="text-muted mb-3">No requests yet.</p>
+          <a href="{% url 'marketplace' %}" class="btn btn-eco btn-sm px-4">
+            <i class="bi bi-shop me-1"></i>Browse Marketplace
+          </a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Saved Listings -->
+    <div class="col-lg-5 reveal delay-2">
+      <div class="card p-4 h-100">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="fw-bold mb-0 section-header">Saved Listings</h5>
+          <a href="{% url 'favourites' %}" class="btn btn-eco btn-sm px-3">View All</a>
+        </div>
+        {% if favourites %}
+        <div style="max-height:380px;overflow-y:auto">
+          {% for fav in favourites %}
+          <div class="d-flex justify-content-between align-items-center p-3 mb-2 rounded-3" style="background:var(--eco-bg);border:1px solid var(--border-color)">
+            <div>
+              <div class="fw-semibold small">{{ fav.listing.title|truncatechars:26 }}</div>
+              <div class="text-muted" style="font-size:0.72rem">
+                <span class="text-eco-green fw-semibold">&#8377;{{ fav.listing.price_per_kg }}/kg</span>
+                &bull; {{ fav.listing.quantity }} kg
+              </div>
+            </div>
+            <a href="{% url 'listing_detail' fav.listing.pk %}" class="btn btn-eco btn-sm px-3">View</a>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+          <div style="width:72px;height:72px;background:var(--eco-bg);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:1.8rem;color:var(--eco-green)">
+            <i class="bi bi-heart"></i>
+          </div>
+          <p class="text-muted mb-0">No saved listings yet.</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Links -->
+  <div class="row g-3 mt-2">
+    <div class="col-6 col-md-3 reveal delay-1">
+      <a href="{% url 'marketplace' %}" class="quick-link-card">
+        <div class="ql-icon"><i class="bi bi-shop"></i></div>
+        <div class="fw-semibold small">Browse Marketplace</div>
+      </a>
+    </div>
+    <div class="col-6 col-md-3 reveal delay-2">
+      <a href="{% url 'recommendations' %}" class="quick-link-card">
+        <div class="ql-icon"><i class="bi bi-stars"></i></div>
+        <div class="fw-semibold small">AI Recommendations</div>
+      </a>
+    </div>
+    <div class="col-6 col-md-3 reveal delay-3">
+      <a href="{% url 'favourites' %}" class="quick-link-card">
+        <div class="ql-icon"><i class="bi bi-heart"></i></div>
+        <div class="fw-semibold small">Saved Listings</div>
+      </a>
+    </div>
+    <div class="col-6 col-md-3 reveal delay-4">
+      <a href="{% url 'transaction_history' %}" class="quick-link-card">
+        <div class="ql-icon"><i class="bi bi-clock-history"></i></div>
+        <div class="fw-semibold small">Transactions</div>
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

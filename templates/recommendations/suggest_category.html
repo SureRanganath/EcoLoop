@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Suggest Category{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1 class="fw-bold mb-2"><i class="bi bi-tag me-2"></i>AI Category Suggestion</h1>
+    <p class="opacity-75 mb-0">Describe a material and our classifier will suggest a category</p>
+  </div>
+</div>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-7">
+      <div class="card p-4 mb-4">
+        <h5 class="fw-bold mb-3 section-header">Material Description</h5>
+        <form method="post" novalidate>
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label fw-semibold">{{ form.description.label }}</label>
+            {{ form.description }}
+          </div>
+          <button type="submit" class="btn btn-eco px-4 fw-semibold">
+            <i class="bi bi-cpu me-2"></i>Suggest Category
+          </button>
+        </form>
+      </div>
+
+      {% if suggestion %}
+      <div class="card p-4 border-0 bg-eco-light">
+        <h5 class="fw-bold mb-3"><i class="bi bi-lightbulb me-2 text-eco-green"></i>Suggested Category</h5>
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <span class="badge bg-eco text-white fs-5 px-3 py-2">{{ suggestion }}</span>
+          <div>
+            <div class="fw-semibold">Confidence: {{ confidence }}%</div>
+            <div class="score-bar mt-1" style="width:200px"><div class="score-fill" style="width:{{ confidence }}%"></div></div>
+          </div>
+        </div>
+        <div class="alert alert-warning small mb-0">
+          <i class="bi bi-exclamation-triangle me-2"></i>
+          <strong>Note:</strong> This classifier is trained on a small example dataset and provides a heuristic suggestion only. Always verify the category manually. The classifier cannot determine chemical composition or hazardous properties from text alone.
+        </div>
+      </div>
+      {% endif %}
+
+      <div class="card p-4 mt-4">
+        <h6 class="fw-bold mb-2">How This Works</h6>
+        <p class="text-muted small mb-0">
+          This feature uses a TF-IDF vectoriser with Logistic Regression trained on a small labelled example dataset covering 8 material categories. It is a heuristic tool to help users select the right category when creating a listing. The suggestion can be overridden when filling in the listing form.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

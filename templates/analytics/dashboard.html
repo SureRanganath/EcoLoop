@@ -1,0 +1,226 @@
+{% extends 'base.html' %}
+{% block title %}Analytics Dashboard{% endblock %}
+{% block extra_css %}
+<style>
+  .chart-container { position: relative; height: 280px; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1 class="fw-bold mb-2"><i class="bi bi-bar-chart me-2"></i>Analytics Dashboard</h1>
+    <p class="opacity-75 mb-0">Platform statistics and environmental impact — calculated from live database records</p>
+  </div>
+</div>
+
+<div class="container py-4">
+  <!-- KPI Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <div class="stat-card bg-white">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <div class="stat-value text-eco-green">{{ total_listings }}</div>
+            <div class="stat-label">Total Listings</div>
+          </div>
+          <div class="stat-icon bg-eco-light text-eco-green"><i class="bi bi-list-ul"></i></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card bg-white">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <div class="stat-value text-success">{{ available_listings }}</div>
+            <div class="stat-label">Available Now</div>
+          </div>
+          <div class="stat-icon bg-success-subtle text-success"><i class="bi bi-check-circle"></i></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card bg-white">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <div class="stat-value text-primary">{{ total_users }}</div>
+            <div class="stat-label">Registered Users</div>
+          </div>
+          <div class="stat-icon bg-primary-subtle text-primary"><i class="bi bi-people"></i></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card bg-white">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <div class="stat-value text-info">{{ completed_exchanges }}</div>
+            <div class="stat-label">Exchanges Done</div>
+          </div>
+          <div class="stat-icon bg-info-subtle text-info"><i class="bi bi-arrow-left-right"></i></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card bg-white">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <div class="stat-value text-warning">{{ total_requests }}</div>
+            <div class="stat-label">Total Requests</div>
+          </div>
+          <div class="stat-icon bg-warning-subtle text-warning"><i class="bi bi-send"></i></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card bg-white">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <div class="stat-value text-eco-green">{{ available_qty|floatformat:0 }}</div>
+            <div class="stat-label">Available (kg)</div>
+          </div>
+          <div class="stat-icon bg-eco-light text-eco-green"><i class="bi bi-box-seam"></i></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card bg-white">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <div class="stat-value text-success">{{ exchanged_qty|floatformat:0 }}</div>
+            <div class="stat-label">Exchanged (kg)</div>
+          </div>
+          <div class="stat-icon bg-success-subtle text-success"><i class="bi bi-recycle"></i></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card bg-white">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <div class="stat-value text-success">{{ estimated_co2_saved|floatformat:0 }}</div>
+            <div class="stat-label">Est. CO₂ Saved (kg)*</div>
+          </div>
+          <div class="stat-icon bg-success-subtle text-success"><i class="bi bi-tree"></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Row 1 -->
+  <div class="row g-4 mb-4">
+    <div class="col-lg-6">
+      <div class="card p-4">
+        <h6 class="fw-bold mb-3 section-header">Material Category Distribution</h6>
+        <div class="chart-container">
+          <canvas id="categoryChart"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="card p-4">
+        <h6 class="fw-bold mb-3 section-header">Monthly Exchange Trend</h6>
+        <div class="chart-container">
+          <canvas id="monthlyChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Row 2 -->
+  <div class="row g-4 mb-4">
+    <div class="col-lg-6">
+      <div class="card p-4">
+        <h6 class="fw-bold mb-3 section-header">Listings by State (Top 10)</h6>
+        <div class="chart-container">
+          <canvas id="stateChart"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="card p-4">
+        <h6 class="fw-bold mb-3 section-header">User Distribution</h6>
+        <div class="chart-container">
+          <canvas id="userChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Monthly Quantity Chart -->
+  <div class="card p-4 mb-4">
+    <h6 class="fw-bold mb-3 section-header">Monthly Quantity Exchanged (kg)</h6>
+    <div class="chart-container" style="height:220px">
+      <canvas id="qtyChart"></canvas>
+    </div>
+  </div>
+
+  <p class="text-muted small">
+    * CO₂ estimate assumes 0.5 kg CO₂ equivalent saved per kg of industrial waste diverted from disposal. This is an illustrative figure for demonstration purposes only — not a verified scientific measurement.
+  </p>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+const ECO_COLORS = ['#2d7a4f','#4caf7d','#7bc67e','#a8d5b5','#1a5c38','#3a9e6a','#6dbf8a','#9ed4b0'];
+
+// Category Doughnut
+new Chart(document.getElementById('categoryChart'), {
+  type: 'doughnut',
+  data: {
+    labels: {{ cat_labels|safe }},
+    datasets: [{ data: {{ cat_counts|safe }}, backgroundColor: ECO_COLORS, borderWidth: 2, borderColor: '#fff' }]
+  },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
+});
+
+// Monthly Line
+new Chart(document.getElementById('monthlyChart'), {
+  type: 'line',
+  data: {
+    labels: {{ monthly_labels|safe }},
+    datasets: [{
+      label: 'Exchanges',
+      data: {{ monthly_counts|safe }},
+      borderColor: '#2d7a4f',
+      backgroundColor: 'rgba(45,122,79,0.1)',
+      fill: true,
+      tension: 0.4,
+      pointBackgroundColor: '#2d7a4f'
+    }]
+  },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+});
+
+// State Bar
+new Chart(document.getElementById('stateChart'), {
+  type: 'bar',
+  data: {
+    labels: {{ state_labels|safe }},
+    datasets: [{ label: 'Listings', data: {{ state_counts|safe }}, backgroundColor: '#2d7a4f', borderRadius: 6 }]
+  },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+});
+
+// User Pie
+new Chart(document.getElementById('userChart'), {
+  type: 'pie',
+  data: {
+    labels: ['Suppliers', 'Buyers'],
+    datasets: [{ data: [{{ total_suppliers }}, {{ total_buyers }}], backgroundColor: ['#2d7a4f', '#7bc67e'], borderWidth: 2, borderColor: '#fff' }]
+  },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+});
+
+// Monthly Qty Bar
+new Chart(document.getElementById('qtyChart'), {
+  type: 'bar',
+  data: {
+    labels: {{ monthly_labels|safe }},
+    datasets: [{ label: 'Quantity (kg)', data: {{ monthly_qty|safe }}, backgroundColor: 'rgba(45,122,79,0.7)', borderRadius: 6 }]
+  },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+});
+</script>
+{% endblock %}
