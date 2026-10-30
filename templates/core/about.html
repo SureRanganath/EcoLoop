@@ -3,66 +3,102 @@
 {% block content %}
 <div class="page-header">
   <div class="container">
-    <h1 class="fw-bold mb-2"><i class="bi bi-info-circle me-2"></i>About EcoLoop</h1>
-    <p class="opacity-75 mb-0">A Circular Economy Marketplace for Industrial Waste Exchange</p>
+    <div class="hero-badge mb-2"><span class="dot"></span>About EcoLoop</div>
+    <h1 class="fw-bold mb-2" style="color:#fff">Closing the Loop on Industrial Waste</h1>
+    <p class="opacity-75 mb-0">A circular economy marketplace for industrial waste exchange — powered by AI matching</p>
   </div>
 </div>
+
 <div class="container py-5">
   <div class="row g-5">
-    <div class="col-lg-8">
-      <h3 class="fw-bold mb-3 section-header">What is EcoLoop?</h3>
-      <p>EcoLoop is a web-based industrial waste exchange marketplace that connects industries producing reusable waste materials with industries that can use those materials as raw inputs. The platform promotes a circular economy by keeping materials in productive use rather than sending them to landfill.</p>
-      <p>For example: a plastic manufacturing company with 500 kg of reusable plastic scraps can list those materials on EcoLoop. A recycling company needing recycled plastic can find that listing, receive an AI-powered recommendation, and submit a purchase request — all within the platform.</p>
 
+    <!-- ── Main column ── -->
+    <div class="col-lg-8">
+
+      <!-- Intro -->
+      <div class="card p-4 mb-5">
+        <div class="section-label"><i class="bi bi-recycle"></i>What is EcoLoop?</div>
+        <h3 class="fw-bold mb-3">One industry's waste, another's raw material</h3>
+        <p class="mb-3">EcoLoop is a web-based industrial waste exchange that connects industries producing reusable
+          waste materials with industries that can use those materials as raw inputs. Instead of paying to send
+          scrap to landfill, a supplier lists it here — and a buyer who needs exactly that input can find it,
+          get matched by AI, and complete the exchange on the platform.</p>
+        <div class="d-flex gap-3 align-items-start p-3" style="background:var(--eco-bg);border-radius:var(--radius-md);border-left:4px solid var(--eco-green)">
+          <i class="bi bi-lightbulb-fill fs-4 text-eco-green"></i>
+          <p class="small mb-0"><strong>Worked example:</strong> a plastics manufacturer with 500 kg of reusable HDPE
+            scrap lists it at ₹45/kg. A pipe manufacturer needing recycled feedstock sees an AI recommendation
+            scoring that listing on description, category, quantity, price and location — then submits a purchase
+            request. The supplier accepts, the exchange is recorded, and both sides track it in their dashboard.</p>
+        </div>
+      </div>
+
+      <!-- Circular economy -->
       <h3 class="fw-bold mt-5 mb-3 section-header">The Circular Economy</h3>
-      <p>A circular economy is an economic system aimed at eliminating waste and the continual use of resources. It contrasts with the traditional linear economy (make → use → dispose) by keeping products and materials in use for as long as possible.</p>
-      <div class="row g-3 mt-2">
+      <p class="mb-4">A circular economy keeps products and materials in use for as long as possible, extracting
+        their maximum value before recovery and regeneration. It replaces the traditional linear model
+        <strong>(make → use → dispose)</strong> with a loop:</p>
+      <div class="row g-3 mb-2">
         <div class="col-md-4">
-          <div class="card text-center p-3 h-100">
-            <i class="bi bi-arrow-repeat fs-2 text-eco-green mb-2"></i>
-            <h6 class="fw-semibold">Reduce</h6>
-            <p class="text-muted small mb-0">Minimise industrial waste generation at the source.</p>
+          <div class="card text-center p-4 h-100">
+            <div class="cat-icon mb-3"><i class="bi bi-arrow-repeat"></i></div>
+            <h6 class="fw-bold">Reduce</h6>
+            <p class="text-muted small mb-0">Minimise waste generation at the source by matching surplus to real demand.</p>
           </div>
         </div>
         <div class="col-md-4">
-          <div class="card text-center p-3 h-100">
-            <i class="bi bi-recycle fs-2 text-eco-green mb-2"></i>
-            <h6 class="fw-semibold">Reuse</h6>
-            <p class="text-muted small mb-0">Find new applications for materials before recycling.</p>
+          <div class="card text-center p-4 h-100">
+            <div class="cat-icon mb-3"><i class="bi bi-recycle"></i></div>
+            <h6 class="fw-bold">Reuse</h6>
+            <p class="text-muted small mb-0">Find new applications for materials before they are shredded or melted down.</p>
           </div>
         </div>
         <div class="col-md-4">
-          <div class="card text-center p-3 h-100">
-            <i class="bi bi-gear fs-2 text-eco-green mb-2"></i>
-            <h6 class="fw-semibold">Recycle</h6>
-            <p class="text-muted small mb-0">Process materials into new products when reuse is not possible.</p>
+          <div class="card text-center p-4 h-100">
+            <div class="cat-icon mb-3"><i class="bi bi-gear"></i></div>
+            <h6 class="fw-bold">Recycle</h6>
+            <p class="text-muted small mb-0">Process materials into new products when direct reuse isn't possible.</p>
           </div>
         </div>
       </div>
 
+      <!-- AI -->
       <h3 class="fw-bold mt-5 mb-3 section-header">AI Recommendation System</h3>
-      <p>EcoLoop uses a content-based recommendation engine built with Python and scikit-learn. The system combines:</p>
-      <ul>
-        <li><strong>TF-IDF text similarity</strong> — matches material descriptions using term frequency–inverse document frequency and cosine similarity.</li>
-        <li><strong>Category compatibility</strong> — prioritises exact category matches.</li>
-        <li><strong>Quantity scoring</strong> — checks whether available quantity meets the buyer's requirement.</li>
-        <li><strong>Price scoring</strong> — evaluates whether the listing price fits the buyer's budget.</li>
-        <li><strong>Location scoring</strong> — gives preference to listings in the buyer's preferred state.</li>
-      </ul>
-      <p class="text-muted small"><em>Note: This is a content-based approach suitable for small datasets. No pretrained model accuracy is claimed. The system explains each recommendation transparently.</em></p>
+      <p class="mb-3">EcoLoop uses a content-based recommendation engine built with Python and scikit-learn.
+        Every listing is scored against the buyer's request and each score is explained in plain language:</p>
+      <div class="card p-0 mb-3 overflow-hidden">
+        <table class="table table-hover mb-0 align-middle">
+          <thead class="table-light">
+            <tr><th>Factor</th><th class="text-end">Weight</th><th>What it measures</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Text similarity</strong></td><td class="text-end fw-semibold">35%</td><td>TF-IDF + cosine similarity between the request and the listing's title, category and description</td></tr>
+            <tr><td><strong>Category match</strong></td><td class="text-end fw-semibold">25%</td><td>Exact category match, partial credit when no category is specified</td></tr>
+            <tr><td><strong>Quantity</strong></td><td class="text-end fw-semibold">15%</td><td>Whether available quantity covers the requested amount</td></tr>
+            <tr><td><strong>Location</strong></td><td class="text-end fw-semibold">15%</td><td>Preference for listings in the buyer's preferred state</td></tr>
+            <tr><td><strong>Price</strong></td><td class="text-end fw-semibold">10%</td><td>Whether the price fits the stated budget, scaled by overage</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-muted small mb-0"><em>A separate TF-IDF + Logistic Regression classifier suggests a material
+        category from a free-text description. Both are content-based approaches suited to this dataset size —
+        no pretrained-model accuracy is claimed, and every recommendation shows its reasoning.</em></p>
 
+      <!-- Stack -->
       <h3 class="fw-bold mt-5 mb-3 section-header">Technology Stack</h3>
       <div class="row g-3">
         {% for tech, desc in tech_stack %}
         <div class="col-md-6">
-          <div class="d-flex gap-2 align-items-start">
+          <div class="d-flex gap-2 align-items-start p-2 h-100" style="border-radius:var(--radius-sm)">
             <i class="bi bi-check-circle-fill text-eco-green mt-1"></i>
             <div><strong>{{ tech }}</strong><br><small class="text-muted">{{ desc }}</small></div>
           </div>
         </div>
         {% endfor %}
       </div>
+
     </div>
+
+    <!-- ── Sidebar ── -->
     <div class="col-lg-4">
       <div class="card p-4 mb-4">
         <h5 class="fw-bold mb-3"><i class="bi bi-mortarboard me-2 text-eco-green"></i>Project Info</h5>
@@ -71,22 +107,33 @@
           <dt class="col-5">Type</dt><dd class="col-7">Major Project</dd>
           <dt class="col-5">Domain</dt><dd class="col-7">CSE / Web + AI</dd>
           <dt class="col-5">Backend</dt><dd class="col-7">Python / Django</dd>
-          <dt class="col-5">Frontend</dt><dd class="col-7">Bootstrap 5</dd>
-          <dt class="col-5">Database</dt><dd class="col-7">SQLite</dd>
+          <dt class="col-5">Frontend</dt><dd class="col-7">Bootstrap 5 + Chart.js</dd>
+          <dt class="col-5">Database</dt><dd class="col-7">Neon Postgres</dd>
           <dt class="col-5">AI/ML</dt><dd class="col-7">scikit-learn</dd>
+          <dt class="col-5">Tests</dt><dd class="col-7">48 automated</dd>
         </dl>
       </div>
-      <div class="card p-4 bg-eco text-white">
+
+      <div class="card p-4 mb-4 bg-eco text-white">
         <h5 class="fw-bold mb-3"><i class="bi bi-graph-up me-2"></i>Platform Goals</h5>
         <ul class="list-unstyled small mb-0">
           <li class="mb-2"><i class="bi bi-arrow-right me-2"></i>Reduce industrial landfill waste</li>
           <li class="mb-2"><i class="bi bi-arrow-right me-2"></i>Lower raw material costs</li>
           <li class="mb-2"><i class="bi bi-arrow-right me-2"></i>Connect waste suppliers with buyers</li>
-          <li class="mb-2"><i class="bi bi-arrow-right me-2"></i>Promote circular economy</li>
-          <li class="mb-2"><i class="bi bi-arrow-right me-2"></i>Track environmental impact</li>
+          <li class="mb-2"><i class="bi bi-arrow-right me-2"></i>Promote the circular economy</li>
+          <li class="mb-0"><i class="bi bi-arrow-right me-2"></i>Track environmental impact</li>
         </ul>
       </div>
+
+      <div class="card p-4 text-center">
+        <div class="cat-icon mx-auto mb-3"><i class="bi bi-shield-check"></i></div>
+        <h6 class="fw-bold mb-2">Honest by design</h6>
+        <p class="text-muted small mb-3">Every score on this platform is computed from the data you see — no
+          black box, no invented accuracy figures.</p>
+        <a href="{% url 'register' %}" class="btn btn-eco btn-sm w-100">Join EcoLoop</a>
+      </div>
     </div>
+
   </div>
 </div>
 {% endblock %}

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load category_tags %}
 {% block title %}{{ listing.title }}{% endblock %}
 {% block content %}
 <div class="container py-4">
@@ -16,7 +17,15 @@
         {% if listing.image %}
         <img src="{{ listing.image.url }}" class="img-fluid rounded mb-4" alt="{{ listing.title }}" style="max-height:350px;object-fit:cover;width:100%">
         {% else %}
-        <div class="listing-placeholder rounded mb-4" style="height:250px"><i class="bi {{ listing.category.icon }}"></i></div>
+        <div class="listing-placeholder rounded mb-4" style="height:250px">
+          {% category_image listing.category as cat_img %}
+          {% if cat_img %}
+          <img class="cat-bg" src="{{ cat_img }}" alt="{{ listing.category.name }}" loading="lazy">
+          <span class="cat-label">{{ listing.category.name }}</span>
+          {% else %}
+          <i class="bi {{ listing.category.icon }}"></i>
+          {% endif %}
+        </div>
         {% endif %}
 
         <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
@@ -133,7 +142,15 @@
       {% for r in related %}
       <div class="col-md-3">
         <div class="card listing-card h-100">
-          <div class="listing-placeholder" style="height:120px"><i class="bi {{ r.category.icon }}"></i></div>
+          <div class="listing-placeholder" style="height:120px">
+            {% category_image r.category as cat_img %}
+            {% if cat_img %}
+            <img class="cat-bg" src="{{ cat_img }}" alt="" loading="lazy">
+            <span class="cat-label">{{ r.category.name }}</span>
+            {% else %}
+            <i class="bi {{ r.category.icon }}"></i>
+            {% endif %}
+          </div>
           <div class="card-body p-3">
             <h6 class="fw-semibold small mb-1">{{ r.title|truncatechars:30 }}</h6>
             <div class="text-eco-green fw-bold small">&#8377;{{ r.price_per_kg }}/kg</div>

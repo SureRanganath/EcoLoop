@@ -22,13 +22,13 @@ def home(request):
 def about(request):
     tech_stack = [
         ('Python 3.14', 'Backend programming language'),
-        ('Django 5.1', 'Web framework with ORM, auth, and admin'),
-        ('SQLite', 'Lightweight relational database'),
-        ('Bootstrap 5', 'Responsive CSS framework'),
-        ('scikit-learn', 'TF-IDF and ML recommendation engine'),
+        ('Django 6.1', 'Web framework with ORM, auth, sessions and admin'),
+        ('Neon Postgres', 'Cloud PostgreSQL database (local SQLite fallback)'),
+        ('Bootstrap 5', 'Responsive CSS framework with Bootstrap Icons'),
+        ('scikit-learn', 'TF-IDF, cosine similarity and Logistic Regression'),
         ('pandas / NumPy', 'Data processing and numerical computing'),
         ('Chart.js', 'Interactive analytics charts'),
-        ('python-dotenv', 'Environment-based configuration'),
+        ('python-dotenv + psycopg', 'Environment configuration and PostgreSQL driver'),
     ]
     return render(request, 'core/about.html', {'tech_stack': tech_stack})
 

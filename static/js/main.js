@@ -2,6 +2,52 @@
 'use strict';
 
 // ── Navbar scroll effect ──────────────────────────────────────
+// ── Landing transition: stagger components as they arrive on the page ──
+// Elements that already use the .reveal observer are skipped so the two
+// systems never fight over opacity. Without IntersectionObserver (or when
+// the visitor prefers reduced motion) nothing is hidden at all.
+const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const REVEAL_SEL = '.reveal, .reveal-left, .reveal-right';
+
+if (!REDUCED_MOTION && 'IntersectionObserver' in window) {
+  // Containers whose direct children land one after another.
+  const GROUPS = [
+    '.page-header',                    // page title band
+    '.row.g-3', '.row.g-4', '.row.g-5',
+    '.row.justify-content-center',     // auth / form pages
+  ];
+  const STAGGER = 0.07;                // seconds between siblings
+  const seen = new Set();
+  const pending = [];
+
+  GROUPS.forEach((selector) => {
+    document.querySelectorAll(selector).forEach((group) => {
+      if (seen.has(group)) return;
+      seen.add(group);
+      let i = 0;
+      Array.from(group.children).forEach((child) => {
+        // leave reveal-driven content to its own observer
+        if (child.matches(REVEAL_SEL) || child.querySelector(REVEAL_SEL)) return;
+        child.style.setProperty('--land-delay', `${(i * STAGGER).toFixed(3)}s`);
+        child.classList.add('land-pending');
+        pending.push(child);
+        i += 1;
+      });
+    });
+  });
+
+  const landObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.remove('land-pending');
+      entry.target.classList.add('land');
+      landObserver.unobserve(entry.target);
+    });
+  }, { threshold: 0, rootMargin: '0px 0px -40px 0px' });
+
+  pending.forEach((el) => landObserver.observe(el));
+}
+
 const navbar = document.querySelector('.navbar-premium');
 if (navbar) {
   const onScroll = () => {

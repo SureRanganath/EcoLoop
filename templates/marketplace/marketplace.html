@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load category_tags %}
 {% block title %}Marketplace{% endblock %}
 {% block content %}
 
@@ -89,7 +90,15 @@
           {% if listing.image %}
           <img src="{{ listing.image.url }}" class="card-img-top" alt="{{ listing.title }}">
           {% else %}
-          <div class="listing-placeholder"><i class="bi {{ listing.category.icon }}"></i></div>
+          <div class="listing-placeholder">
+            {% category_image listing.category as cat_img %}
+            {% if cat_img %}
+            <img class="cat-bg" src="{{ cat_img }}" alt="" loading="lazy">
+            <span class="cat-label">{{ listing.category.name }}</span>
+            {% else %}
+            <i class="bi {{ listing.category.icon }}"></i>
+            {% endif %}
+          </div>
           {% endif %}
           <span class="badge position-absolute" style="top:12px;left:12px;background:rgba(0,0,0,0.55);color:#fff;border-radius:6px;padding:4px 8px;font-size:0.72rem;backdrop-filter:blur(4px)">
             Grade {{ listing.quality_grade }}

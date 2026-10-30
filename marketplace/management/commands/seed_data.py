@@ -88,8 +88,11 @@ class Command(BaseCommand):
             if not User.objects.filter(username=username).exists():
                 user = User.objects.create_user(username=username, password='EcoLoop@123',
                                                  first_name=first, last_name=last, email=email)
-                UserProfile.objects.create(user=user, role='supplier', company_name=company,
-                                           industry_type=industry, city=city, state=state, is_verified=True)
+                UserProfile.objects.update_or_create(
+                    user=user,
+                    defaults=dict(role='supplier', company_name=company,
+                                  industry_type=industry, city=city, state=state,
+                                  is_verified=True))
             supplier_users.append(User.objects.get(username=username))
 
         self.stdout.write('Seeding buyer accounts...')
@@ -97,8 +100,11 @@ class Command(BaseCommand):
             if not User.objects.filter(username=username).exists():
                 user = User.objects.create_user(username=username, password='EcoLoop@123',
                                                  first_name=first, last_name=last, email=email)
-                UserProfile.objects.create(user=user, role='buyer', company_name=company,
-                                           industry_type=industry, city=city, state=state, is_verified=True)
+                UserProfile.objects.update_or_create(
+                    user=user,
+                    defaults=dict(role='buyer', company_name=company,
+                                  industry_type=industry, city=city, state=state,
+                                  is_verified=True))
 
         self.stdout.write('Seeding waste listings...')
         for i, (title, cat_name, desc, qty, price, grade, city, state) in enumerate(LISTINGS_DATA):

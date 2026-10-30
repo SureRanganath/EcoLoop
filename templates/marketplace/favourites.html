@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load category_tags %}
 {% block title %}Saved Listings{% endblock %}
 {% block content %}
 <div class="page-header">
@@ -13,7 +14,15 @@
     {% for fav in favourites %}
     <div class="col-md-6 col-lg-4">
       <div class="card listing-card h-100">
-        <div class="listing-placeholder"><i class="bi {{ fav.listing.category.icon }}"></i></div>
+        <div class="listing-placeholder">
+          {% category_image fav.listing.category as cat_img %}
+          {% if cat_img %}
+          <img class="cat-bg" src="{{ cat_img }}" alt="" loading="lazy">
+          <span class="cat-label">{{ fav.listing.category.name }}</span>
+          {% else %}
+          <i class="bi {{ fav.listing.category.icon }}"></i>
+          {% endif %}
+        </div>
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-start mb-2">
             <span class="badge bg-success-subtle text-success small">{{ fav.listing.category.name }}</span>

@@ -9,16 +9,20 @@ from decimal import Decimal
 def make_supplier(username='sup1', password='TestPass@123'):
     user = User.objects.create_user(username=username, password=password,
                                      first_name='Test', last_name='Supplier', email=f'{username}@test.com')
-    UserProfile.objects.create(user=user, role='supplier', company_name='Test Supplier Co',
-                                industry_type='Manufacturing', city='Hyderabad', state='Telangana')
+    UserProfile.objects.update_or_create(
+        user=user,
+        defaults=dict(role='supplier', company_name='Test Supplier Co',
+                      industry_type='Manufacturing', city='Hyderabad', state='Telangana'))
     return user
 
 
 def make_buyer(username='buy1', password='TestPass@123'):
     user = User.objects.create_user(username=username, password=password,
                                      first_name='Test', last_name='Buyer', email=f'{username}@test.com')
-    UserProfile.objects.create(user=user, role='buyer', company_name='Test Buyer Co',
-                                industry_type='Recycling', city='Pune', state='Maharashtra')
+    UserProfile.objects.update_or_create(
+        user=user,
+        defaults=dict(role='buyer', company_name='Test Buyer Co',
+                      industry_type='Recycling', city='Pune', state='Maharashtra'))
     return user
 
 

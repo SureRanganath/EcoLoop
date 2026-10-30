@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
+from urllib.parse import urlparse, parse_qs, unquote
 from dotenv import load_dotenv
+from django.core.exceptions import ImproperlyConfigured
 
 load_dotenv()
 
@@ -54,12 +56,36 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# Database: Neon Postgres via DATABASE_URL in .env, SQLite fallback when unset.
+DATABASE_URL = os.getenv('DATABASE_URL', '').strip()
+
+if DATABASE_URL:
+    parsed = urlparse(DATABASE_URL)
+    if parsed.scheme not in ('postgresql', 'postgres'):
+        raise ImproperlyConfigured(
+            f"DATABASE_URL must be a postgresql:// URL, got scheme '{parsed.scheme}'"
+        )
+    # Query params such as ?sslmode=require become Django OPTIONS (sslmode, channel_binding, ...)
+    db_options = {k: v[-1] for k, v in parse_qs(parsed.query).items()}
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': unquote(parsed.path.lstrip('/')),
+            'USER': unquote(parsed.username or ''),
+            'PASSWORD': unquote(parsed.password or ''),
+            'HOST': parsed.hostname or '',
+            'PORT': parsed.port or '',
+            'OPTIONS': db_options,
+            'CONN_MAX_AGE': 60,  # keep Neon connections warm
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load category_tags %}
 {% block title %}Home{% endblock %}
 {% block content %}
 
@@ -120,9 +121,18 @@
       {% for cat in categories %}
       <div class="col-6 col-md-4 col-lg-2 reveal delay-{{ forloop.counter }}">
         <a href="{% url 'marketplace' %}?category={{ cat.slug }}" class="cat-card">
+          {% category_image cat as cat_img %}
+          {% if cat_img %}
+          <div class="cat-media">
+            <img src="{{ cat_img }}" alt="{{ cat.name }} material" loading="lazy">
+            <span class="cat-label">{{ cat.name }}</span>
+          </div>
+          <div class="text-muted" style="font-size:0.72rem">{{ cat.count }} listing{{ cat.count|pluralize }}</div>
+          {% else %}
           <div class="cat-icon"><i class="bi {{ cat.icon }}"></i></div>
           <div class="fw-semibold small mb-1">{{ cat.name }}</div>
           <div class="text-muted" style="font-size:0.72rem">{{ cat.count }} listing{{ cat.count|pluralize }}</div>
+          {% endif %}
         </a>
       </div>
       {% endfor %}
@@ -152,7 +162,15 @@
             {% if listing.image %}
             <img src="{{ listing.image.url }}" class="card-img-top" alt="{{ listing.title }}">
             {% else %}
-            <div class="listing-placeholder"><i class="bi {{ listing.category.icon }}"></i></div>
+            <div class="listing-placeholder">
+              {% category_image listing.category as cat_img %}
+              {% if cat_img %}
+              <img class="cat-bg" src="{{ cat_img }}" alt="" loading="lazy">
+              <span class="cat-label">{{ listing.category.name }}</span>
+              {% else %}
+              <i class="bi {{ listing.category.icon }}"></i>
+              {% endif %}
+            </div>
             {% endif %}
             <span class="badge position-absolute" style="top:12px;right:12px;background:rgba(0,0,0,0.55);color:#fff;border-radius:6px;padding:4px 8px;font-size:0.72rem;font-weight:600;backdrop-filter:blur(4px)">
               Grade {{ listing.quality_grade }}

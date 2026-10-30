@@ -455,6 +455,36 @@ h1, h2, h3, h4, h5, h6 { font-weight: 700; line-height: 1.25; color: var(--text-
 .stat-trend.up { color: #22c55e; }
 .stat-trend.neutral { color: var(--text-muted); }
 
+/* Listing media placeholder — base component (used standalone on the
+   listing-detail page as well as inside listing cards) */
+.listing-placeholder {
+  position: relative;
+  overflow: hidden;
+  min-height: 160px;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--eco-bg), var(--eco-bg2));
+  color: var(--eco-green);
+  font-size: 3rem;
+  transition: var(--transition);
+}
+/* Optional category artwork behind the icon */
+.listing-placeholder .cat-bg {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+/* Soft wash keeps the icon legible over any photo */
+.listing-placeholder::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(240,249,244,0.68), rgba(232,245,233,0.58));
+}
+.listing-placeholder > .bi {
+  position: relative;
+  z-index: 2;
+  filter: drop-shadow(0 2px 6px rgba(20,90,50,0.25));
+}
+
 /* Listing Cards */
 .listing-card { border-radius: var(--radius-md); overflow: hidden; }
 .listing-card .card-img-top { height: 190px; object-fit: cover; transition: transform 0.4s ease; }
@@ -648,6 +678,62 @@ h1, h2, h3, h4, h5, h6 { font-weight: 700; line-height: 1.25; color: var(--text-
   transition: var(--transition);
 }
 .cat-card:hover .cat-icon { background: var(--eco-green); color: #fff; transform: scale(1.1); }
+
+/* Category artwork band — only applied when the card has an image
+   (static/images/categories/<slug>.<ext>); icon-only cards keep the
+   original centred layout. */
+.cat-card:has(.cat-media) { padding-top: 0; }
+.cat-media {
+  position: relative;
+  height: 104px;
+  margin: -1.5rem -1rem 0;
+  overflow: hidden;
+  background: var(--eco-bg2);
+}
+.cat-media img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.cat-media::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(13,17,23,0) 45%, rgba(240,249,244,0.94) 100%);
+}
+.cat-card:hover .cat-media img { transform: scale(1.08); }
+
+/* Category name shown ON the artwork — replaces the icon/logo overlay.
+   In .cat-media it is pinned bottom-left; in .listing-placeholder the flex
+   centring places it where the icon used to sit. */
+.cat-label {
+  position: absolute;
+  left: 12px; bottom: 10px;
+  z-index: 3;
+  max-width: calc(100% - 24px);
+  padding: 0.32rem 0.7rem;
+  border-radius: 50px;
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--eco-green-dark);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+}
+.listing-placeholder .cat-label {
+  position: relative;
+  left: auto; bottom: auto;
+  z-index: 2;
+  max-width: 85%;
+  padding: 0.5rem 1.15rem;
+  font-size: 0.95rem;
+  text-align: center;
+  white-space: normal;
+}
 
 /* ============================================================
    SCORE / RECOMMENDATION

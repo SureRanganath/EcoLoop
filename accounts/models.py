@@ -32,3 +32,26 @@ class UserProfile(models.Model):
     @property
     def is_buyer(self):
         return self.role == 'buyer'
+
+
+@receiver(post_save, sender=User)
+def ensure_user_profile(sender, instance, created, raw, **kwargs):
+    """Guarantee every user has a UserProfile.
+
+    Profiles are normally created with explicit details (registration form,
+    seed_data, tests). This signal covers users created without them — most
+    commonly via the Django admin — which would otherwise break
+    ``user.profile`` lookups in views and templates.
+    """
+    if raw:  # loading a fixture: let the fixture provide the profile
+        return
+    UserProfile.objects.get_or_create(
+        user=instance,
+        defaults={
+            'role': 'buyer',
+            'company_name': instance.get_full_name() or instance.username,
+            'industry_type': 'Other',
+            'city': '',
+            'state': '',
+        },
+    )

@@ -46,14 +46,18 @@ class RegisterForm(UserCreationForm):
         user.last_name = self.cleaned_data['last_name']
         if commit:
             user.save()
-            UserProfile.objects.create(
+            # update_or_create: the ensure_user_profile signal may already
+            # have made a placeholder profile during user.save() above.
+            UserProfile.objects.update_or_create(
                 user=user,
-                role=self.cleaned_data['role'],
-                company_name=self.cleaned_data['company_name'],
-                industry_type=self.cleaned_data['industry_type'],
-                phone=self.cleaned_data.get('phone', ''),
-                city=self.cleaned_data['city'],
-                state=self.cleaned_data['state'],
+                defaults={
+                    'role': self.cleaned_data['role'],
+                    'company_name': self.cleaned_data['company_name'],
+                    'industry_type': self.cleaned_data['industry_type'],
+                    'phone': self.cleaned_data.get('phone', ''),
+                    'city': self.cleaned_data['city'],
+                    'state': self.cleaned_data['state'],
+                },
             )
         return user
 
